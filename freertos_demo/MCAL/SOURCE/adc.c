@@ -11,11 +11,6 @@
 #include "adc.h"
 
 
-typedef enum
-{
-    ADC_IDLE,
-    ADC_BUSY
-}ADC_Status;
 
 
 
@@ -23,13 +18,15 @@ typedef enum
 
 
 
-
+/*TO DO : Biwise numbers have to be fixed */
 static inline set_registers_adc(const ADC_Config *config_adc)
 {
     uint32_t x = (config_adc->afsel_portselect) | (config_adc->select_bustype);
 
     switch(x)
     {   
+
+
         case 01 :
                   set_bits_mask_reg (GPIO_AFSEL(0,1) , config_adc->pin_config);
                   set_bits_mask_reg (GPIO_DEN(0,1) , config_adc->Digital_enable_value_pin_mask);
@@ -96,66 +93,42 @@ static inline set_registers_adc(const ADC_Config *config_adc)
 }
 
 
-#define ADC_RIS(adc_type)  ADC_RIS_##adc_type
 
-#define ADC_RIS_0 (volatile uint32_t*) 0x40038004
 
-#define ADC_RIS_1 (volatile uint32_t*) 0x40039004
-
-#define ADCA_CTSS(adc_type)  ADCA_CTSS_##adc_type
-
-#define ADCA_CTSS_0 (volatile uint32_t*) 0x40038000
-
-#define ADCA_CTSS_1 (volatile uint32_t*) 0x40039000
-
-#define ADCE_MUX(adc_type)  ADCE_MUX_##adc_type
-
-#define ADCE_MUX_0 (volatile uint32_t*) 0x40038014
-
-#define ADCE_MUX_1 (volatile uint32_t*) 0x400390014
-
-#define ADSS_MUX(adc_type)  ADSS_MUX_##adc_type
-
-#define ADSS_MUX_0 (volatile uint32_t*) 0x40038040 /*Selects the PINS to be used for the ADC*/
-
-#define ADSS_MUX_1 (volatile uint32_t*) 0x40039040  /*Selects the PINS to be used for the ADC*/
-
-#define ADCSSCTL(adc_type)  ADSS_MUX_##adc_type
-
-#define ADCSSCTL_0  (volatile uint32_t*) 0x40038044
-#define ADCSSCTL_1  (volatile uint32_t*) 0x40039044
-
-#define ADCISC(adc_type) ADCISC_##adc_type
-
-#define ADCISC_0 (volatile uint32_t*) 0x4003800C
-#define ADCISC_1 (volatile uint32_t*) 0x4003900C
-
-#define ADCIM_0  (volatile uint32_t*) 0x40038008
-#define ADCIM_1  (volatile uint32_t*) 0x40039009
-
-#define ADCPSSI_0  (volatile uint32_t*)0x40038028
-#define ADCPSSI_0  (volatile uint32_t*)0x40039028
-
-void start_adcconversion(/*const ADC_Config *config_adc*/)
+#if 0
+void start_adcconversion(ADC_Sampler sampler , ADC_TYPE adc_type)
 {
-    set_bits_mask_reg(ADCPSSI_0,1U); /*enable interrupt for ss0*/
-}
+    if(adc_type == ADC0)
+        {
+        set_bits_mask_reg(ADCPSSI(0),sampler); /*enable interrupt for ss0*/
 
+        }
+    else
+        {
+        set_bits_mask_reg(ADCPSSI(1),sampler); /*enable interrupt for ss0*/
+        }
+    }
 
+#endif
 
 void Configure_Sampler(const ADC_Config *config_adc  )
 {
-    uint32_t sampl_num  = (1 << config_adc->sampler);
-
+#define enable_ss0_PSSi 1U
+#define enable_ss1_PSSi 1U
     if(config_adc->adc_type == ADC0)
     {
         clear_bits_integer(ADCA_CTSS(0), 0);
-        set_bits_mask_reg(ADCE_MUX(0),0x0F);/*As if now trigger is selected to processor*/
+        set_bits_mask_reg(ADCE_MUX(0),config_adc->trigger_select);/*As if now trigger is selected to processor*/
         set_bits_mask_reg(ADSS_MUX(0),config_adc->pin_config);
-        set_bits_mask_reg(ADCSSCTL_0 , CTL_REGISTER_MASK);
+        //set_bits_mask_reg(ADCSSCTL_0 , config_adc->adc_trig_reg_mask); /*should be set when requesting for a sample sequence*/
        // set_bits_mask_reg(ADC_RIS(0),config_adc->Interrupt_enable_mask);
         set_bits_mask_reg(ADCIM_0,1U); /*enable interrupt for ss0*/
+        set_bits_mask_reg(ADCPSSI(0) , (enable_ss0_PSSi));
+
+        /*Enable the sequencer*/
         set_bits_mask_reg(ADCA_CTSS(0), 1);
+
+
     }
 
     else
@@ -163,11 +136,13 @@ void Configure_Sampler(const ADC_Config *config_adc  )
         clear_bits_integer(ADCA_CTSS(1), 0);
         set_bits_mask_reg(ADCE_MUX(1),((uint32_t)0x0F));/*As if now trigger is selected to processor*/
         set_bits_mask_reg(ADSS_MUX(1),config_adc->pin_config);
-        set_bits_mask_reg(ADCSSCTL(1),config_adc->ADC_CTLREG_CONFIG);
+       // set_bits_mask_reg(ADCSSCTL(1),config_adc->ADC_CTLREG_CONFIG);
        // set_bits_mask_reg(ADC_RIS(1),config_adc->Interrupt_enable_mask);
         set_bits_mask_reg(ADCIM_1,1U); /*enable interrupt for ss0*/
+        set_bits_mask_reg(ADCPSSI(0) , (enable_ss1_PSSi ));
+        set_bits_mask_reg(ADCA_CTSS(1), 1);
     }
-    start_adcconversion();
+
 
 
 }
@@ -199,10 +174,14 @@ void ISR_ADC_Sequence0()
 
 void ADC_Init(const ADC_Config *config_adc)
 {
+    int i =0 ;
     SYSCTL_RCGCGPIO_R |= (config_adc->enable_adc_port);
-    SYSCTL_RCGCADC_R |= (config_adc->enable_adc_module_mask);
-    set_registers_adc(&config_adc[0]);
-    Configure_Sampler(&C_ADC_Config[0]);/*either ADC 0 or ADC 1 */
+    for (i = 0 ; i < ADC_CONFIG ; i++)
+    {
+        SYSCTL_RCGCADC_R |= (config_adc[i].enable_adc_module_mask);
+        set_registers_adc(&config_adc[i]);
+        Configure_Sampler(&config_adc[i]);/*either ADC 0 or ADC 1 */
+    }
 }
 
 
@@ -233,10 +212,19 @@ static ADC_Status ADC_BUSY_STATUS(ADC_TYPE adc)
 
     }
 }
+QueueHandle_t xQueue2;
 
+uint8_t V_Values_ADC[Total_sensors];
+
+//StaticQueue_t xStaticQueue; /*structure to hold the static data structure of the queue */
 void Initilize_ADC()
 {
+    uint32_t storagearea = ((Total_sensors * sizeof(ADC_Values)) + 1U);
     ADC_Init(&C_ADC_Config[0]);
+    /*Create a queue in the freeros for the maintainence of the ADC*/
+    initlize_circular_queue(&V_Values_ADC[0] , (sizeof(V_Values_ADC)/ sizeof(V_Values_ADC[0])),ADC_MANGMT_STATUS ,  sizeof(uint8_t) );
+
+
 }
 
 

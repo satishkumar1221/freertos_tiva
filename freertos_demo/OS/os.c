@@ -6,7 +6,7 @@
  * @desc Contains details about operating system implementation */ 
 #include "os.h"   
 #include <stdint.h>
-
+#include "adc.h"
 
 
 //#include "adc_appl.h"
@@ -85,6 +85,7 @@ void task20ms()
 		 Read_value_ADC();
 		// os_task20ms_if();
 		 /*Keep this at the end of the task*/
+		 ADC_Sequencer_Runnable_task();
 		 #if ENABLE_WDG
 		 if(!Verify_bits(task_exec_stat.R,ms20task_setbit))
   		 {
@@ -92,6 +93,8 @@ void task20ms()
 			   esp_task_wdt_reset();
 		 }
 		 #endif
+
+
     	 vTaskDelayUntil( &xLastWakeTime, xDelay20ms);
      }
 }
@@ -112,6 +115,7 @@ void task50ms()
 
 	   vTaskDelayUntil( &xLastWakeTime, xDelay50ms);
    }
+
 }
 /** 100 ms cyclic task rate. This function is run periodic every 100 milli seconds */
 void task100ms()
@@ -252,6 +256,8 @@ void Hpriotsk()
 void task10ms()
 {
 	 TickType_t xLastWakeTime = xTaskGetTickCount ();
+
+	 ADC_StateMachine();
 		 const TickType_t xDelay10ms = pdMS_TO_TICKS(10);
 		for(;;)
 		{

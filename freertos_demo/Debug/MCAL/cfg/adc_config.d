@@ -14,6 +14,16 @@ MCAL/cfg/adc_config.obj: D:/Softwares/ti/CCS/ccs/tools/compiler/ti-cgt-arm_20.2.
 MCAL/cfg/adc_config.obj: D:/Softwares/ti/CCS/ccs/tools/compiler/ti-cgt-arm_20.2.5.LTS/include/sys/_stdint.h
 MCAL/cfg/adc_config.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h
 MCAL/cfg/adc_config.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/FreeRTOS.h
+MCAL/cfg/adc_config.obj: D:/Softwares/ti/CCS/ccs/tools/compiler/ti-cgt-arm_20.2.5.LTS/include/stddef.h
+MCAL/cfg/adc_config.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/FreeRTOSConfig.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/projdefs.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/portable.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/deprecated_definitions.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/portable/CCS/ARM_CM4F/portmacro.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/mpu_wrappers.h
+MCAL/cfg/adc_config.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/queue.h
+MCAL/cfg/adc_config.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h
 
 ../MCAL/cfg/adc_config.c:
 
@@ -42,4 +52,24 @@ D:/Softwares/ti/CCS/ccs/tools/compiler/ti-cgt-arm_20.2.5.LTS/include/sys/_stdint
 D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h:
 
 D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/FreeRTOS.h:
+
+D:/Softwares/ti/CCS/ccs/tools/compiler/ti-cgt-arm_20.2.5.LTS/include/stddef.h:
+
+D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/FreeRTOSConfig.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/projdefs.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/portable.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/deprecated_definitions.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/portable/CCS/ARM_CM4F/portmacro.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/mpu_wrappers.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/queue.h:
+
+D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h:
 

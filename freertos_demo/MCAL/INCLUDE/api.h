@@ -64,5 +64,15 @@ inline uint8_t  Are_AllBits_Set_32(uint32_t *ptr , uint32_t value)
 
 }
 
+inline uint8_t  Reg_Are_AllBits_Set_32(volatile uint32_t *ptr , uint32_t value)
+{
+    uint8_t stack_var;
+    stack_var = (((P2VAR(ptr) & value) == value) ? 1 : 0);
+    return(stack_var);
+
+}
+
+extern void ADC_StateMachine();
+
 #endif /* INCLUDE_API_H_ */
 

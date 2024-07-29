@@ -12,7 +12,9 @@ GEN_CMDS__FLAG :=
 ORDERED_OBJS += \
 "./freertos_demo.obj" \
 "./startup_ccs.obj" \
+"./MCAL/SOURCE/Mcal_Queue.obj" \
 "./MCAL/SOURCE/adc.obj" \
+"./MCAL/SOURCE/adc_sync.obj" \
 "./MCAL/SOURCE/exception_handlers.obj" \
 "./MCAL/SOURCE/sys_init.obj" \
 "./MCAL/cfg/adc_config.obj" \
@@ -189,8 +191,8 @@ freertos_demo.bin: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "freertos_demo.obj" "startup_ccs.obj" "MCAL\SOURCE\adc.obj" "MCAL\SOURCE\exception_handlers.obj" "MCAL\SOURCE\sys_init.obj" "MCAL\cfg\adc_config.obj" "OS\os.obj" "OS\os_const.obj" "drivers\buttons.obj" "drivers\rgb.obj" "third_party\FreeRTOS\Source\list.obj" "third_party\FreeRTOS\Source\queue.obj" "third_party\FreeRTOS\Source\tasks.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.obj" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.obj" "utils\uartstdio.obj" "utils\ustdlib.obj" 
-	-$(RM) "freertos_demo.d" "startup_ccs.d" "MCAL\SOURCE\adc.d" "MCAL\SOURCE\exception_handlers.d" "MCAL\SOURCE\sys_init.d" "MCAL\cfg\adc_config.d" "OS\os.d" "OS\os_const.d" "drivers\buttons.d" "drivers\rgb.d" "third_party\FreeRTOS\Source\list.d" "third_party\FreeRTOS\Source\queue.d" "third_party\FreeRTOS\Source\tasks.d" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.d" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.d" "utils\uartstdio.d" "utils\ustdlib.d" 
+	-$(RM) "freertos_demo.obj" "startup_ccs.obj" "MCAL\SOURCE\Mcal_Queue.obj" "MCAL\SOURCE\adc.obj" "MCAL\SOURCE\adc_sync.obj" "MCAL\SOURCE\exception_handlers.obj" "MCAL\SOURCE\sys_init.obj" "MCAL\cfg\adc_config.obj" "OS\os.obj" "OS\os_const.obj" "drivers\buttons.obj" "drivers\rgb.obj" "third_party\FreeRTOS\Source\list.obj" "third_party\FreeRTOS\Source\queue.obj" "third_party\FreeRTOS\Source\tasks.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.obj" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.obj" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.obj" "utils\uartstdio.obj" "utils\ustdlib.obj" 
+	-$(RM) "freertos_demo.d" "startup_ccs.d" "MCAL\SOURCE\Mcal_Queue.d" "MCAL\SOURCE\adc.d" "MCAL\SOURCE\adc_sync.d" "MCAL\SOURCE\exception_handlers.d" "MCAL\SOURCE\sys_init.d" "MCAL\cfg\adc_config.d" "OS\os.d" "OS\os_const.d" "drivers\buttons.d" "drivers\rgb.d" "third_party\FreeRTOS\Source\list.d" "third_party\FreeRTOS\Source\queue.d" "third_party\FreeRTOS\Source\tasks.d" "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\port.d" "third_party\FreeRTOS\Source\portable\MemMang\heap_2.d" "utils\uartstdio.d" "utils\ustdlib.d" 
 	-$(RM) "third_party\FreeRTOS\Source\portable\CCS\ARM_CM4F\portasm.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
