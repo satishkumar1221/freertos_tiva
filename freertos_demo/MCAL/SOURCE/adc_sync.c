@@ -273,29 +273,29 @@ uint8_t status_sync = FALSE;
 void Deepcopy_Data_FIFO_LLDBUFFER(ADC_Values Read_sensorvalue)
 {
     ADC_Config *config_adc = &C_ADC_Config[Read_sensorvalue];
-    static uint32_t  itr_t = 0 ;
+    static uint32_t  itr_t[Total_sensors] = {0} ;
     uint32_t i =0 ;
 
-    if(itr_t < config_adc->buffer_size)
+    if(itr_t[Read_sensorvalue] < config_adc->buffer_size)
     {
         if((config_adc->adc_type == ADC0) && (config_adc->sampler == 0))
         {
-            config_adc->ptr_usr_buffer[itr_t] = ((OUTPUT_FIFOBUFFER(0 , 0)) &(0x00000FFF));
+            config_adc->ptr_usr_buffer[itr_t[Read_sensorvalue]] = ((OUTPUT_FIFOBUFFER(0 , 0)) &(0x00000FFF));
         }
         else if((config_adc->adc_type == ADC0) &&   (config_adc->sampler == 1))
         {
-            config_adc->ptr_usr_buffer[itr_t] = ((OUTPUT_FIFOBUFFER(0 , 1)) &(0x00000FFF));
+            config_adc->ptr_usr_buffer[itr_t[Read_sensorvalue]] = ((OUTPUT_FIFOBUFFER(0 , 1)) &(0x00000FFF));
         }
         else
         {
             /*complete remainign combinations*/
         }
-        itr_t++;
+        itr_t[Read_sensorvalue]++;
     }
 
-    else if  (itr_t >= config_adc->buffer_size )
+    else if  (itr_t[Read_sensorvalue] >= config_adc->buffer_size )
     {
-        itr_t = 0;
+        itr_t[Read_sensorvalue] = 0;
         status_sync = TRUE;
     }
 
