@@ -157,8 +157,13 @@ void start_Sequence_ADC(ADC_Values sensorname)
 
     if(config_adc->adc_type == ADC0)
     {
+        /*Configure the ADC MUX Register */
+        set_bits_mask_reg(ADSS_MUX(0),config_adc->pin_config);
         /*ADC SSCTL */
         *ADCSSCTL_0|=config_adc->ADC_CTLREG_CONFIG;
+        /*Enable the Sequencer to  start the ADC conversion*/
+        set_bits_mask_reg(ADCA_CTSS(0), 1);
+        /*Enable the PSSI bit to start the sampler triggered by the CPU  */
         *ADCPSSI_0|= (1 << config_adc->sampler);
         /*ADC PSSI */
 
@@ -166,7 +171,15 @@ void start_Sequence_ADC(ADC_Values sensorname)
     }
     else
     {
-        reg_write(ADCSSCTL_1,config_adc->ADC_CTLREG_CONFIG);
+        /*Configure the ADC MUX Register */
+        set_bits_mask_reg(ADSS_MUX(1),config_adc->pin_config);
+        /*ADC SSCTL */
+        *ADCSSCTL_1|=config_adc->ADC_CTLREG_CONFIG;
+        /*Enable the Sequencer to  start the ADC conversion*/
+        set_bits_mask_reg(ADCA_CTSS(1), 1);
+        /*Enable the PSSI bit to start the sampler triggered by the CPU  */
+        *ADCPSSI_1|= (1 << config_adc->sampler);
+        /*ADC PSSI */;
     }
     //reg_write()
 }
@@ -312,13 +325,21 @@ void stop_Sequence_ADC(ADC_Values Read_sensorname)
        {
            /*ADC SSCTL */
            reg_write(ADCSSCTL(0),config_adc->adc_stop_triggervalue);
-           /*ADC PSSI */
+           /*Disable the PSSI bit for the ADC */
+           *ADCPSSI_0 &= (~(1 << config_adc->sampler)); /*clear the bit by the sampler*
+           /*Disable the sequencer*/
+           set_bits_mask_reg(ADCA_CTSS(0), 0);
 
 
        }
        else
        {
+           /*ADC SSCTL */
            reg_write(ADCSSCTL(1),config_adc->adc_stop_triggervalue);
+           /*Disable the PSSI bit for the ADC */
+           *ADCPSSI_1 &= (~(1 << config_adc->sampler)); /*clear the bit by the sampler*
+           /*Disable the sequencer*/
+           set_bits_mask_reg(ADCA_CTSS(1), 0);
        }
 
 }

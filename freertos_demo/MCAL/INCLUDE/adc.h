@@ -30,7 +30,7 @@
 #define ADC_PIN_CONFIGURE_PIN_1 2
 #define ADC_PIN_CONFIGURE_PIN_2 4
 #define ADC_PIN_CONFIGURE_PIN_3 8
-#define ADC_CONFIG 4U
+#define TOTAL_ADC_CONFIG 4U
 #define ADC_CTRL_MASK_CONFIGURE 0x0F 
 #define DMA_CTRL_MASK_CONFIGURE 0x0F
 #define RESET_CONFIG 0x00
@@ -59,15 +59,15 @@
 
 
 
-#define CTL_REGISTER_MASK_PE_P0 0x08
-#define CTL_REGISTER_MASK_PE_P1 0x80
-#define CTL_REGISTER_MASK_PE_P2 0x800
-#define CTL_REGISTER_MASK_PE_P3 0x8000 /*Delibrately disabling the end bit */
+#define CTL_REGISTER_MASK_PE_P0 0x00
+#define CTL_REGISTER_MASK_PE_P1 0x00
+#define CTL_REGISTER_MASK_PE_P2 0x000
+#define CTL_REGISTER_MASK_PE_P3 0x0000 /*Delibrately disabling the end bit */
 
-#define CTL_REGISTER_MASK_STOP_PE_P0 0x0A
-#define CTL_REGISTER_MASK_STOP_PE_P1 0xA0
-#define CTL_REGISTER_MASK_STOP_PE_P2 0xA00
-#define CTL_REGISTER_MASK_STOP_PE_P3 0x000 /*Delibrately disabling the end bit */
+#define CTL_REGISTER_MASK_STOP_PE_P0 0x04
+#define CTL_REGISTER_MASK_STOP_PE_P1 0x40
+#define CTL_REGISTER_MASK_STOP_PE_P2 0x400
+#define CTL_REGISTER_MASK_STOP_PE_P3 0x4000 /*Delibrately disabling the end bit */
 
 
 #define GSYNC_BIT (uint32_t)(1U << 31U)
@@ -136,7 +136,16 @@ typedef enum
     Alwayssample = 0x0F
 }ADC_Trigger_Select;
 
-
+typedef enum
+{
+    no_oversampluing,
+    oversampling_2x,
+    oversampling_4x,
+    oversampling_8x,
+    oversampling_16x,
+    oversampling_32x,
+    oversampling_64x
+}adc_avgctrl;
 typedef struct
 {
     uint32_t enable_adc_module_mask;
@@ -158,6 +167,7 @@ typedef struct
     uint16_t *ptr_usr_buffer;
     uint8_t buffer_size;
     uint32_t adc_stop_triggervalue;
+    adc_avgctrl sampling_rate;
 }ADC_Config;
 
 extern void Read_value_ADC();
@@ -359,14 +369,14 @@ void ISR_ADC_Sequence0();
 
 
 extern void ADC_Init(const ADC_Config *config_adc);
-extern const ADC_Config C_ADC_Config[ADC_CONFIG];
+extern const ADC_Config C_ADC_Config[TOTAL_ADC_CONFIG];
 extern void Initilize_ADC();
 
 void start_adcconversion(ADC_Sampler sampler , ADC_TYPE adc_type);
 
 extern uint8_t Get_GSYNC_Status_ADC(ADC_Sampler sampler , ADC_TYPE adc_type);
 extern uint8_t Get_SYNCWAIT_Status_ADC(ADC_Sampler sampler , ADC_TYPE adc_type);
-extern const ADC_Config C_ADC_Config[ADC_CONFIG];
+extern const ADC_Config C_ADC_Config[TOTAL_ADC_CONFIG];
 
 extern void  ADC_Sequencer_Runnable_task();
 

@@ -57,6 +57,7 @@ static inline set_registers_adc(const ADC_Config *config_adc)
         break;
 
         case 5 :
+        {
                 #if 0
                   set_bits_mask_reg (GPIODATA(4,1) , config_adc->reset);
                   set_bits_mask_reg (GPIODIR(4,1) , config_adc->reset);
@@ -68,6 +69,8 @@ static inline set_registers_adc(const ADC_Config *config_adc)
                   set_bits_mask_reg (GPIOMIS(4,1) , config_adc->reset);
                   set_bits_mask_reg (GPIOICR(4,1) , config_adc->reset);
                #endif
+
+
                   set_bits_mask_reg ((GPIO_AFSEL(4,1)) , (config_adc->pin_config));
                   set_bits_mask_reg ((GPIO_DEN(4,1)) , (config_adc->Digital_enable_value_pin_mask));
 
@@ -77,6 +80,21 @@ static inline set_registers_adc(const ADC_Config *config_adc)
                   set_bits_mask_reg (GPIO_AMSEL(4,1) , config_adc->amsel_reg_mask);
                   set_bits_mask_reg (GPIOADCCTL(4,1) , config_adc->adc_trig_reg_mask);
                   set_bits_mask_reg (GPIODMACTL(4,1) , config_adc->dma_trig_reg_mask);
+
+                  if(config_adc->adc_type == ADC0)
+                        {
+                            /*configure control register for the DIether mode and sampler register */
+                            ADC0_CTL_R  = (ADC0_CTL_R |  (1 << 6U));   /*bit 6 is to enable Diether mode */
+                            ADC0_SAC_R = (ADC0_CTL_R | (config_adc->sampling_rate));
+
+                        }
+                        else
+                        {
+                            ADC1_CTL_R  = (ADC1_CTL_R |  (1 << 6U));   /*bit 6 is to enable Diether mode */
+                            ADC1_SAC_R = (ADC1_CTL_R | (config_adc->sampling_rate));
+
+                        }
+    }
         break;
 
         case 51 :
@@ -119,14 +137,14 @@ void Configure_Sampler(const ADC_Config *config_adc  )
     {
         clear_bits_integer(ADCA_CTSS(0), 0);
         set_bits_mask_reg(ADCE_MUX(0),config_adc->trigger_select);/*As if now trigger is selected to processor*/
-        set_bits_mask_reg(ADSS_MUX(0),config_adc->pin_config);
+        //set_bits_mask_reg(ADSS_MUX(0),config_adc->pin_config); /*No Need to start here*/
         //set_bits_mask_reg(ADCSSCTL_0 , config_adc->adc_trig_reg_mask); /*should be set when requesting for a sample sequence*/
        // set_bits_mask_reg(ADC_RIS(0),config_adc->Interrupt_enable_mask);
-        set_bits_mask_reg(ADCIM_0,1U); /*enable interrupt for ss0*/
-        set_bits_mask_reg(ADCPSSI(0) , (enable_ss0_PSSi));
+        //set_bits_mask_reg(ADCIM_0,1U); /*enable interrupt for ss0*/
+       // set_bits_mask_reg(ADCPSSI(0) , (enable_ss0_PSSi)); // No need to start here
 
         /*Enable the sequencer*/
-        set_bits_mask_reg(ADCA_CTSS(0), 1);
+        //set_bits_mask_reg(ADCA_CTSS(0), 1);
 
 
     }
@@ -176,7 +194,12 @@ void ADC_Init(const ADC_Config *config_adc)
 {
     int i =0 ;
     SYSCTL_RCGCGPIO_R |= (config_adc->enable_adc_port);
-    for (i = 0 ; i < ADC_CONFIG ; i++)
+    /*Enable Diether mode for the ADC.*/
+
+
+    /*Also configure sampling for ADC for roobustness */
+
+    for (i = 0 ; i < TOTAL_ADC_CONFIG ; i++)
     {
         SYSCTL_RCGCADC_R |= (config_adc[i].enable_adc_module_mask);
         set_registers_adc(&config_adc[i]);
