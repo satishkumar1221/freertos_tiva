@@ -25,6 +25,9 @@ OS/os.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include
 OS/os.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/task.h
 OS/os.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/list.h
 OS/os.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h
+OS/os.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h
+OS/os.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/queue.h
+OS/os.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h
 
 ../OS/os.c:
 
@@ -75,4 +78,10 @@ C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/task.h:
 C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/list.h:
 
 D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h:
+
+D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h:
+
+C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/queue.h:
+
+D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h:
 

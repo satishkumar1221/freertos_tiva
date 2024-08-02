@@ -8,6 +8,12 @@
 #ifndef INCLUDE_ADC_H_
 #define INCLUDE_ADC_H_
 
+#include <stdint.h>
+#include "api.h"
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "Mcal_Queue.h"
+
 #define ENABLE_ADC0_MASK  1U
 #define ENABLE_ADC1_MASK  2U
 
@@ -19,12 +25,63 @@
 #define ENABLE_PORTF_GPIO  32U
 
 #define ADC_PIN_MASK_CONFIGURE 0x0F /*configuring pins 0,1,2,3 in port E */
-#define ADC_CONFIG 1U
+
+#define ADC_PIN_CONFIGURE_PIN_0 1
+#define ADC_PIN_CONFIGURE_PIN_1 2
+#define ADC_PIN_CONFIGURE_PIN_2 4
+#define ADC_PIN_CONFIGURE_PIN_3 8
+#define TOTAL_ADC_CONFIG 4U
 #define ADC_CTRL_MASK_CONFIGURE 0x0F 
 #define DMA_CTRL_MASK_CONFIGURE 0x0F
 #define RESET_CONFIG 0x00
 
-#define CTL_REGISTER_MASK 0xE000
+
+
+
+#define ADC_PIN_CONFIGURE_PIN_0 1
+#define ADC_PIN_CONFIGURE_PIN_1 2
+#define ADC_PIN_CONFIGURE_PIN_2 4
+#define ADC_PIN_CONFIGURE_PIN_3 8
+
+
+#define ADC_PIN_CONFIGURE_PIN_3_MUXSS 0U /*Port E PIN 3 : AIN 0   */
+#define ADC_PIN_CONFIGURE_PIN_1_MUXSS 0x10 /*Pin  1 */
+#define ADC_PIN_CONFIGURE_PIN_2_MUXSS 0x200 /*pin 2 */
+#define ADC_PIN_CONFIGURE_PIN_0_MUXSS 0x4000 /*PIN 3 */
+
+
+
+#define PORTE_PIN0_MASK 5U
+#define PORTE_PIN1_MASK 6U
+#define PORTE_PIN2_MASK 4U
+#define PORTE_PIN3_MASK 0x0CU
+
+
+
+
+#define CTL_REGISTER_MASK_PE_P0 0x00
+#define CTL_REGISTER_MASK_PE_P1 0x00
+#define CTL_REGISTER_MASK_PE_P2 0x000
+#define CTL_REGISTER_MASK_PE_P3 0x0000 /*Delibrately disabling the end bit */
+
+#define CTL_REGISTER_MASK_STOP_PE_P0 0x04
+#define CTL_REGISTER_MASK_STOP_PE_P1 0x40
+#define CTL_REGISTER_MASK_STOP_PE_P2 0x400
+#define CTL_REGISTER_MASK_STOP_PE_P3 0x4000 /*Delibrately disabling the end bit */
+
+
+#define GSYNC_BIT (uint32_t)(1U << 31U)
+#define SYNCWAIT_BIT (uint32_t)(1U << 27U)
+
+
+typedef enum
+{
+   Battery_volt,
+   Soil_sensor ,
+   sensor1,
+   sensor2,
+   Total_sensors
+}ADC_Values; /*THese enus have to match the prot numbers as per the data sheet*/
 
 typedef enum
 {
@@ -59,6 +116,13 @@ typedef enum
 
 typedef enum
 {
+    ADC_IDLE,
+    ADC_BUSY
+}ADC_Status;
+
+
+typedef enum
+{
     Processor_default,/*initialted vy settinf the SSn bit of ADCPSSI register*/
     Analog_compcntl_ACCTL0,
     Analog_compcntl_ACCTL1,
@@ -72,7 +136,16 @@ typedef enum
     Alwayssample = 0x0F
 }ADC_Trigger_Select;
 
-
+typedef enum
+{
+    no_oversampluing,
+    oversampling_2x,
+    oversampling_4x,
+    oversampling_8x,
+    oversampling_16x,
+    oversampling_32x,
+    oversampling_64x
+}adc_avgctrl;
 typedef struct
 {
     uint32_t enable_adc_module_mask;
@@ -91,6 +164,10 @@ typedef struct
     ADC_Sampler sampler;
     ADC_Trigger_Select trigger_select;
     uint32_t ADC_CTLREG_CONFIG;
+    uint16_t *ptr_usr_buffer;
+    uint8_t buffer_size;
+    uint32_t adc_stop_triggervalue;
+    adc_avgctrl sampling_rate;
 }ADC_Config;
 
 extern void Read_value_ADC();
@@ -241,10 +318,74 @@ void ISR_ADC_Sequence0();
 #define GPIOADCCTL_5_1 (uint32_t*) 0x40025530
 #define GPIODMACTL_5_1 (uint32_t*) 0x40025534
 
+
+
+#define ADC_RIS(adc_type)  ADC_RIS_##adc_type
+
+#define ADC_RIS_0 (volatile uint32_t*) 0x40038004
+
+#define ADC_RIS_1 (volatile uint32_t*) 0x40039004
+
+#define ADCA_CTSS(adc_type)  ADCA_CTSS_##adc_type
+
+#define ADCA_CTSS_0 (volatile uint32_t*) 0x40038000
+
+#define ADCA_CTSS_1 (volatile uint32_t*) 0x40039000
+
+#define ADCE_MUX(adc_type)  ADCE_MUX_##adc_type
+
+#define ADCE_MUX_0 (volatile uint32_t*) 0x40038014
+
+#define ADCE_MUX_1 (volatile uint32_t*) 0x400390014
+
+#define ADSS_MUX(adc_type)  ADSS_MUX_##adc_type
+
+#define ADSS_MUX_0 (volatile uint32_t*) 0x40038040 /*Selects the PINS to be used for the ADC*/
+
+#define ADSS_MUX_1 (volatile uint32_t*) 0x40039040  /*Selects the PINS to be used for the ADC*/
+
+#define ADCSSCTL(adc_type)  ADSS_MUX_##adc_type
+
+#define ADCSSCTL_0  (volatile uint32_t*) 0x40038044
+#define ADCSSCTL_1  (volatile uint32_t*) 0x40039044
+
+#define ADCISC(adc_type) ADCISC_##adc_type
+
+#define ADCISC_0 (volatile uint32_t*) 0x4003800C
+#define ADCISC_1 (volatile uint32_t*) 0x4003900C
+
+#define ADCIM_0  (volatile uint32_t*) 0x40038008
+#define ADCIM_1  (volatile uint32_t*) 0x40039009
+
+
+#define ADCPSSI(adc_type) ADCPSSI_##adc_type
+
+
+#define ADCPSSI_0  (volatile uint32_t*)0x40038028
+#define ADCPSSI_1  (volatile uint32_t*)0x40039028
+
+
+
+
+
 extern void ADC_Init(const ADC_Config *config_adc);
-extern const ADC_Config C_ADC_Config[ADC_CONFIG];
+extern const ADC_Config C_ADC_Config[TOTAL_ADC_CONFIG];
 extern void Initilize_ADC();
-extern const ADC_Config C_ADC_Config[ADC_CONFIG];
+
+void start_adcconversion(ADC_Sampler sampler , ADC_TYPE adc_type);
+
+extern uint8_t Get_GSYNC_Status_ADC(ADC_Sampler sampler , ADC_TYPE adc_type);
+extern uint8_t Get_SYNCWAIT_Status_ADC(ADC_Sampler sampler , ADC_TYPE adc_type);
+extern const ADC_Config C_ADC_Config[TOTAL_ADC_CONFIG];
+
+extern void  ADC_Sequencer_Runnable_task();
+
+extern QueueHandle_t xQueue_adc;
+extern uint16_t V_sensor1[8];
+extern uint16_t V_sensor2[8];
+extern uint16_t V_sensor3[8];
+extern uint16_t V_sensor4[8];
+
 
 
 #endif /* INCLUDE_ADC_H_ */

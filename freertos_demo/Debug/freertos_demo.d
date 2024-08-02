@@ -35,6 +35,7 @@ freertos_demo.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source
 freertos_demo.obj: C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/semphr.h
 freertos_demo.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h
 freertos_demo.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h
+freertos_demo.obj: D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h
 
 ../freertos_demo.c:
 
@@ -105,4 +106,6 @@ C:/ti/tivaware_c_series_2_1_4_178/third_party/FreeRTOS/Source/include/semphr.h:
 D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/api.h:
 
 D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/adc.h:
+
+D:/WorkSpace/Ti_CCS/Basic_Workspace/freertos_demo/MCAL/INCLUDE/Mcal_Queue.h:
 
