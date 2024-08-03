@@ -7,7 +7,7 @@
 #include "os.h"   
 #include <stdint.h>
 #include "adc.h"
-
+#include "udma.h"
 
 //#include "adc_appl.h"
 //#include "spi.h"
@@ -38,6 +38,7 @@ static void Get_Stack_sizes();
 static void Mcal_Init()
 {
     Initilize_ADC();
+    Init_udma();
 }
 /**system initilization sequence */
  void system_initilazation_sequence()
@@ -72,6 +73,22 @@ void invoke_tasks_core0()
 
 
 /** 20 ms cyclic task rate. This function is run periodic every 20 milli seconds */
+uint8_t lock =0;
+extern uint32_t V_Src_A[64];
+void Test_code_xfer_data_udma()
+{
+   static uint32_t i =0;
+
+   for(i = 0 ; i < 128 ; i++)
+   {
+       V_Src_A[i] = i ;
+   }
+   if(lock == 0)
+   {
+       Enable_DMA_Transfer(channel_30);
+       lock = 1;
+   }
+}
 void task20ms()
 {
 
@@ -93,7 +110,7 @@ void task20ms()
 			   esp_task_wdt_reset();
 		 }
 		 #endif
-
+         Test_code_xfer_data_udma();
 
     	 vTaskDelayUntil( &xLastWakeTime, xDelay20ms);
      }
